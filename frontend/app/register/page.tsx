@@ -7,6 +7,9 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '../store/authStore'
 import { Eye, EyeOff, UserPlus } from 'lucide-react'
+import { FcGoogle } from 'react-icons/fc'
+import { signIn } from 'next-auth/react'
+
 
 interface RegisterForm {
   name: string
@@ -21,7 +24,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const register = useAuthStore(state => state.register)
-  
+
   const { register: registerField, handleSubmit, formState: { errors }, watch } = useForm<RegisterForm>()
   const password = watch('password')
 
@@ -51,7 +54,7 @@ export default function RegisterPage() {
               Únete y comienza a gestionar tus notas
             </p>
           </div>
-          
+
           <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -190,6 +193,41 @@ export default function RegisterPage() {
               >
                 Iniciar sesión aquí
               </Link>
+            </div>
+            {/* Separador */}
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">O continúa con</span>
+                </div>
+              </div>
+
+              {/* Botón de Google */}
+              <div className="mt-6">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsLoading(true)
+                    try {
+                      await signIn('google', {
+                        callbackUrl: '/dashboard',
+                        redirect: true
+                      })
+                    } catch (error) {
+                      setIsLoading(false)
+                      toast.error('Error al iniciar sesión con Google')
+                    }
+                  }}
+                  disabled={isLoading}
+                  className="w-full flex justify-center items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
+                >
+                  <FcGoogle className="h-5 w-5 mr-2" />
+                  Continuar con Google
+                </button>
+              </div>
             </div>
           </div>
         </div>

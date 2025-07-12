@@ -1,7 +1,9 @@
+// frontend/app/layout.tsx
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
+import NextAuthSessionProvider from './components/SessionProvider'
 import AuthProvider from './components/AuthProvider'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,19 +21,21 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        <AuthProvider>
-          {children}
-          <Toaster 
-            position="top-right"
-            toastOptions={{
-              duration: 4000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-              },
-            }}
-          />
-        </AuthProvider>
+        <NextAuthSessionProvider>
+          <AuthProvider>
+            {children}
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#363636',
+                  color: '#fff',
+                },
+              }}
+            />
+          </AuthProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   )

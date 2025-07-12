@@ -1,4 +1,4 @@
-// frontend/app/store/authStore.ts - Reemplaza todo el store
+// frontend/app/store/authStore.ts
 import { create } from 'zustand'
 import axios from 'axios'
 
@@ -8,24 +8,26 @@ interface User {
   id: string
   name: string
   email: string
+  isGoogleUser?: boolean
 }
 
 interface AuthState {
   user: User | null
   token: string | null
   loading: boolean
-  isInitialized: boolean // ← NUEVO: saber si ya terminó de cargar
+  isInitialized: boolean
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
   initAuth: () => void
+  setGoogleUser: (user: User) => void
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: null,
   loading: false,
-  isInitialized: false, // ← NUEVO
+  isInitialized: false,
 
   login: async (email: string, password: string) => {
     set({ loading: true })
@@ -37,11 +39,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       const { token, user } = response.data
       
-      // Store in localStorage
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(user))
       
-      // Set axios default header
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
       
       set({ user, token, loading: false })
@@ -62,11 +62,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       const { token, user } = response.data
       
-      // Store in localStorage
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(user))
       
-      // Set axios default header
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
       
       set({ user, token, loading: false })
@@ -83,8 +81,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ user: null, token: null })
   },
 
+  setGoogleUser: (user: User) => {
+    console.log('✅ Configurando usuario de Google:', user)
+    // No necesitamos token dummy aqui, el AuthProvider ya manejó el token real
+    set({ 
+      user: { ...user, isGoogleUser: true }, 
+      token: localStorage.getItem('token') || 'google-session',
+      loading: false,
+      isInitialized: true 
+    })
+  },
+
   initAuth: () => {
-    //console.log('🔍 Iniciando autenticación...')
+    console.log('🔍 Iniciando autenticación...')
     
     const token = localStorage.getItem('token')
     const userStr = localStorage.getItem('user')
@@ -92,19 +101,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (token && userStr) {
       try {
         const user = JSON.parse(userStr)
-        //console.log('✅ Usuario recuperado del localStorage:', user.name)
+        console.log('✅ Usuario recuperado del localStorage:', user.name)
         
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        set({ user, token, isInitialized: true }) // ← NUEVO: marcar como inicializado
+        set({ user, token, isInitialized: true })
       } catch (error) {
-        //console.error('❌ Error parseando usuario:', error)
+        console.error('❌ Error parseando usuario:', error)
         localStorage.removeItem('token')
         localStorage.removeItem('user')
-        set({ isInitialized: true }) // ← NUEVO: marcar como inicializado aunque falle
+        set({ isInitialized: true })
       }
     } else {
-      //console.log('❌ No hay datos guardados')
-      set({ isInitialized: true }) // ← NUEVO: marcar como inicializado
+      console.log('❌ No hay datos guardados')
+      set({ isInitialized: true })
     }
   }
 }))
