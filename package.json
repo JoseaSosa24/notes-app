@@ -1,0 +1,15 @@
+{
+  "name": "notes-manager-monorepo",
+  "version": "1.0.0",
+  "description": "Personal Notes Manager - Fullstack App",
+  "scripts": {
+    "dev": "concurrently \"bun --cwd backend dev\" \"bun --cwd frontend dev\"",
+    "dev:frontend": "bun --cwd frontend dev",
+    "dev:backend": "bun --cwd backend dev",
+    "build": "bun --cwd frontend build",
+    "start": "bun --cwd backend start"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
