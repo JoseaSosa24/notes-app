@@ -22,7 +22,7 @@ export default function AuthProvider({
 
     // Si hay sesión de Google pero no usuario en store
     if (session?.user && !user) {
-      console.log('✅ Usuario de Google detectado, autenticando con backend...')
+      //console.log('✅ Usuario de Google detectado, autenticando con backend...')
       
       const authenticateGoogleUser = async () => {
         try {
@@ -41,7 +41,7 @@ export default function AuthProvider({
           // Configurar header de axios
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
           
-          console.log('✅ Usuario de Google autenticado con backend:', backendUser.name)
+          //console.log('✅ Usuario de Google autenticado con backend:', backendUser.name)
           
           // Actualizar store
           setGoogleUser({
@@ -51,7 +51,7 @@ export default function AuthProvider({
             isGoogleUser: true
           })
         } catch (error: any) {
-          console.error('❌ Error autenticando usuario de Google:', error)
+          //console.error('❌ Error autenticando usuario de Google:', error)
           // Si falla, al menos configurar usuario local
           setGoogleUser({
             id: session.user.id || session.user.email!,

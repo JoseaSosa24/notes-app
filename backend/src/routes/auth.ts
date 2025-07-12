@@ -129,14 +129,14 @@ router.post('/google', async (req, res) => {
         googleId
       });
       await user.save();
-      console.log('✅ Nuevo usuario de Google creado:', email);
+      //console.log('✅ Nuevo usuario de Google creado:', email);
     } else {
       // Actualizar usuario existente para marcarlo como usuario de Google
       if (!user.isGoogleUser) {
         user.isGoogleUser = true;
         user.googleId = googleId;
         await user.save();
-        console.log('✅ Usuario existente actualizado para Google:', email);
+        //console.log('✅ Usuario existente actualizado para Google:', email);
       }
     }
 

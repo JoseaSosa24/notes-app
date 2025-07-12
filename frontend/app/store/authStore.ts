@@ -82,7 +82,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   setGoogleUser: (user: User) => {
-    console.log('✅ Configurando usuario de Google:', user)
+    //console.log('✅ Configurando usuario de Google:', user)
     // No necesitamos token dummy aqui, el AuthProvider ya manejó el token real
     set({ 
       user: { ...user, isGoogleUser: true }, 
@@ -93,7 +93,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   initAuth: () => {
-    console.log('🔍 Iniciando autenticación...')
+    //console.log('🔍 Iniciando autenticación...')
     
     const token = localStorage.getItem('token')
     const userStr = localStorage.getItem('user')
@@ -101,7 +101,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (token && userStr) {
       try {
         const user = JSON.parse(userStr)
-        console.log('✅ Usuario recuperado del localStorage:', user.name)
+        //console.log('✅ Usuario recuperado del localStorage:', user.name)
         
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         set({ user, token, isInitialized: true })
@@ -112,7 +112,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ isInitialized: true })
       }
     } else {
-      console.log('❌ No hay datos guardados')
+      //('❌ No hay datos guardados')
       set({ isInitialized: true })
     }
   }
