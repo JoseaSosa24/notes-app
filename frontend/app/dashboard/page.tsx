@@ -12,7 +12,7 @@ import ConfirmModal from '../components/ConfirmModal'
 import toast from 'react-hot-toast'
 
 export default function DashboardPage() {
-  const { user, logout } = useAuthStore()
+  const { user, logout, isInitialized } = useAuthStore()
   const { notes, loading, fetchNotes, deleteNote } = useNotesStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedNote, setSelectedNote] = useState<any>(null)
@@ -21,12 +21,35 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
+    if (!isInitialized) {
+      //console.log('⏳ Esperando inicialización...')
+      return
+    }
+
+    //console.log('🏠 Dashboard verificando autenticación...')
+
     if (!user) {
+      //console.log('❌ No hay usuario, redirigiendo a login...')
       router.push('/login')
       return
     }
+
+    console.log('✅ Usuario autenticado:', user.name)
     fetchNotes()
-  }, [user, fetchNotes, router])
+  }, [user, isInitialized, fetchNotes, router])
+
+  // ← NUEVO: Mostrar loading mientras inicializa
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null
+  }
 
   const handleLogout = () => {
     logout()
@@ -70,7 +93,7 @@ export default function DashboardPage() {
                 Mis Notas
               </h1>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <User className="h-4 w-4" />
@@ -102,7 +125,7 @@ export default function DashboardPage() {
               className="input-field pl-10"
             />
           </div>
-          
+
           <button
             onClick={() => setIsCreateModalOpen(true)}
             className="btn-primary flex items-center space-x-2"
@@ -130,7 +153,7 @@ export default function DashboardPage() {
               {searchTerm ? 'No se encontraron notas' : 'No tienes notas aún'}
             </h3>
             <p className="mt-1 text-sm text-gray-500">
-              {searchTerm 
+              {searchTerm
                 ? 'Intenta con otros términos de búsqueda'
                 : 'Comienza creando tu primera nota'
               }

@@ -1,3 +1,4 @@
+// frontend/app/store/authStore.ts - Reemplaza todo el store
 import { create } from 'zustand'
 import axios from 'axios'
 
@@ -13,6 +14,7 @@ interface AuthState {
   user: User | null
   token: string | null
   loading: boolean
+  isInitialized: boolean // ← NUEVO: saber si ya terminó de cargar
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
@@ -23,6 +25,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: null,
   loading: false,
+  isInitialized: false, // ← NUEVO
 
   login: async (email: string, password: string) => {
     set({ loading: true })
@@ -81,19 +84,27 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   initAuth: () => {
+    //console.log('🔍 Iniciando autenticación...')
+    
     const token = localStorage.getItem('token')
     const userStr = localStorage.getItem('user')
     
     if (token && userStr) {
       try {
         const user = JSON.parse(userStr)
+        //console.log('✅ Usuario recuperado del localStorage:', user.name)
+        
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        set({ user, token })
+        set({ user, token, isInitialized: true }) // ← NUEVO: marcar como inicializado
       } catch (error) {
-        // Clear invalid data
+        //console.error('❌ Error parseando usuario:', error)
         localStorage.removeItem('token')
         localStorage.removeItem('user')
+        set({ isInitialized: true }) // ← NUEVO: marcar como inicializado aunque falle
       }
+    } else {
+      //console.log('❌ No hay datos guardados')
+      set({ isInitialized: true }) // ← NUEVO: marcar como inicializado
     }
   }
 }))
