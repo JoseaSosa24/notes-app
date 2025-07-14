@@ -59,7 +59,7 @@ export const useNotes = () => {
         setSelectedNote(updatedNote)
       }
       
-      toast.success('Nota actualizada correctamente')
+      //toast.success('Nota actualizada correctamente')
       return updatedNote
     } catch (error: any) {
       console.error('Error updating note:', error)
