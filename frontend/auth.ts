@@ -1,10 +1,9 @@
-// frontend/auth.ts
+// frontend/auth.ts - Refactorizado
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
-import axios from "axios"
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
+import { authService } from '@/app/services/authService'
+import type { LoginCredentials } from '@/types/auth'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -14,7 +13,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     
-    // ✅ Email/Password con el backend existente
+    // ✅ Email/Password - Delegando al authService
     Credentials({
       name: "credentials",
       credentials: {
@@ -22,18 +21,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        // ✅ Validación más estricta con type guards
+        if (!credentials || 
+            typeof credentials.email !== 'string' || 
+            typeof credentials.password !== 'string' ||
+            !credentials.email.trim() ||
+            !credentials.password.trim()) {
           return null
         }
 
-        try {
-          // ✅ Usar tu backend existente para login
-          const response = await axios.post(`${API_URL}/auth/login`, {
-            email: credentials.email,
-            password: credentials.password
-          })
+        // ✅ Crear objeto tipado correctamente
+        const loginData: LoginCredentials = {
+          email: credentials.email.trim(),
+          password: credentials.password.trim()
+        }
 
-          const { user, token } = response.data
+        try {
+          // ✅ Usar authService con datos tipados
+          const authResponse = await authService.login(loginData)
+
+          const { user, token } = authResponse
 
           if (user && token) {
             return {
@@ -66,14 +73,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, account }) {
       if (account && user) {
         if (account.provider === "google") {
-          // ✅ Para Google, autenticar con backend
+          // ✅ Para Google, usar authService
           try {
-            const response = await axios.post(`${API_URL}/auth/google`, {
-              name: user.name,
-              email: user.email,
+            const authResponse = await authService.authenticateWithGoogle({
+              name: user.name || '',
+              email: user.email || '',
               googleId: user.id
             })
-            token.accessToken = response.data.token
+            token.accessToken = authResponse.token
             token.isGoogleUser = true
           } catch (error) {
             console.error('Error autenticando Google user:', error)
@@ -89,8 +96,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token
     },
-
-
   },
   
   pages: {
