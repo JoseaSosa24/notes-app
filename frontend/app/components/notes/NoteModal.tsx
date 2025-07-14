@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react'
 import { X, Edit3, Trash2, Save, Calendar } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useNotesStore } from '@/app/store/notesStore'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import toast from 'react-hot-toast'
+import { useNotes } from '@/hooks/useNotes'
 
 interface Note {
   _id: string
@@ -30,7 +30,7 @@ interface NoteForm {
 export default function NoteModal({ note, onClose, onDelete }: NoteModalProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { updateNote } = useNotesStore()
+  const { updateNote } = useNotes()
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm<NoteForm>({
     defaultValues: {

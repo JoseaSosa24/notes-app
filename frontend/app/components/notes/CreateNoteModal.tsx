@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { X, Save } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { useNotesStore } from '@/app/store/notesStore'
+import { useNotes } from '@/hooks/useNotes'
+
 
 interface CreateNoteModalProps {
   onClose: () => void
@@ -17,7 +18,7 @@ interface NoteForm {
 
 export default function CreateNoteModal({ onClose }: CreateNoteModalProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const { createNote } = useNotesStore()
+  const { createNote } = useNotes()
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm<NoteForm>()
 

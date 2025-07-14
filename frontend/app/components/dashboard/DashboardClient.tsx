@@ -1,9 +1,8 @@
-// frontend/app/components/DashboardClient.tsx - Configurar token ANTES del fetch
+// frontend/app/components/dashboard/DashboardClient.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
 import { Plus, FileText, Search, LogOut, User } from 'lucide-react'
-import { useNotesStore } from '@/app/store/notesStore'
 import { useRouter } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import NoteCard from '@/app/components/notes/NoteCard'
@@ -12,6 +11,8 @@ import CreateNoteModal from '@/app/components/notes/CreateNoteModal'
 import ConfirmModal from '@/app/components/ui/ConfirmModal'
 import toast from 'react-hot-toast'
 import axios from 'axios'
+import { useNotes } from '@/hooks/useNotes'
+
 
 interface DashboardClientProps {
   initialNotes: any[]
@@ -19,13 +20,27 @@ interface DashboardClientProps {
 
 export default function DashboardClient({ initialNotes }: DashboardClientProps) {
   const { data: session, status } = useSession()
-  const { notes, loading, fetchNotes, deleteNote, setInitialNotes } = useNotesStore()
+  const router = useRouter()
+  
+  // ✅ Hook que maneja todo el estado y lógica de notas
+  const {
+    notes,
+    loading,
+    selectedNote,
+    fetchNotes,
+    deleteNote,
+    searchNotes,
+    setSelectedNote,
+    initializeNotes, // ✅ Método para notas iniciales
+    cleanup
+  } = useNotes()
+
+  // Estado local solo para UI
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedNote, setSelectedNote] = useState<any>(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [noteToDelete, setNoteToDelete] = useState<any>(null)
   const [tokenConfigured, setTokenConfigured] = useState(false)
-  const router = useRouter()
+  const [initialNotesLoaded, setInitialNotesLoaded] = useState(false)
 
   // ✅ 1. Configurar token PRIMERO
   useEffect(() => {
@@ -37,10 +52,9 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
     }
 
     if (session.accessToken && !tokenConfigured) {
-      // ✅ Configurar token globalmente UNA SOLA VEZ
       axios.defaults.headers.common['Authorization'] = `Bearer ${session.accessToken}`
       setTokenConfigured(true)
-      console.log('✅ Token configurado:', session.accessToken.substring(0, 20) + '...')
+      console.log('✅ Token configurado')
     }
   }, [session, status, tokenConfigured, router])
 
@@ -48,19 +62,24 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
   useEffect(() => {
     if (!tokenConfigured || !session) return
 
-    if (initialNotes.length > 0) {
-      setInitialNotes(initialNotes)
-    } else {
-      console.log('🔄 Cargando notas...')
+    // Si hay notas iniciales y no las hemos cargado aún
+    if (initialNotes.length > 0 && !initialNotesLoaded) {
+      console.log('📝 Usando notas iniciales:', initialNotes.length)
+      initializeNotes(initialNotes) // ✅ Usar notas del servidor
+      setInitialNotesLoaded(true)
+    } else if (initialNotes.length === 0 && !initialNotesLoaded) {
+      console.log('🔄 Cargando notas desde API...')
+      setInitialNotesLoaded(true)
       fetchNotes().catch(error => {
         console.error('❌ Error cargando notas:', error)
         toast.error('Error al cargar las notas')
       })
     }
-  }, [tokenConfigured, session, initialNotes, setInitialNotes, fetchNotes])
+  }, [tokenConfigured, session, initialNotes, initialNotesLoaded, fetchNotes])
 
   const handleLogout = async () => {
-    // ✅ Limpiar token y estado
+    // ✅ Limpiar estado y token
+    cleanup()
     delete axios.defaults.headers.common['Authorization']
     setTokenConfigured(false)
     
@@ -76,14 +95,14 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
     if (noteToDelete) {
       try {
         await deleteNote(noteToDelete._id)
-        toast.success('Nota eliminada correctamente')
         setNoteToDelete(null)
+        // Si era la nota seleccionada, cerrar el modal
         if (selectedNote?._id === noteToDelete._id) {
           setSelectedNote(null)
         }
       } catch (error) {
         console.error('Error eliminando nota:', error)
-        toast.error('Error al eliminar la nota')
+        // El toast ya se maneja en el hook useNotes
       }
     }
   }
@@ -107,10 +126,8 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
     return null
   }
 
-  const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // ✅ Usar el método de búsqueda del hook
+  const filteredNotes = searchNotes(searchTerm)
 
   return (
     <div className="min-h-screen bg-gray-50">
