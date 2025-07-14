@@ -1,9 +1,4 @@
-# 📝 Personal Notes Manager - Fullstack App
 
-A modern, fullstack personal notes management application built with Node.js, Express.js, MongoDB, and Next.js 15+.
-
-
-```
 # 🚀 Notes App - Aplicación de Notas Fullstack
 
 Una aplicación moderna de gestión de notas personales construida con Node.js, Express.js, MongoDB y Next.js 15.
