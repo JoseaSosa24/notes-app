@@ -54,7 +54,7 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
     if (session.accessToken && !tokenConfigured) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${session.accessToken}`
       setTokenConfigured(true)
-      console.log('✅ Token configurado')
+      //console.log('✅ Token configurado')
     }
   }, [session, status, tokenConfigured, router])
 
@@ -68,7 +68,7 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
       initializeNotes(initialNotes) // ✅ Usar notas del servidor
       setInitialNotesLoaded(true)
     } else if (initialNotes.length === 0 && !initialNotesLoaded) {
-      console.log('🔄 Cargando notas desde API...')
+      //console.log('🔄 Cargando notas desde API...')
       setInitialNotesLoaded(true)
       fetchNotes().catch(error => {
         console.error('❌ Error cargando notas:', error)
