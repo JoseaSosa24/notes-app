@@ -15,77 +15,13 @@ export interface RegisterForm {
   confirmPassword: string
 }
 
-export type FieldConfig = {
-  name: keyof RegisterForm
-  label: string
-  type: string
-  placeholder: string
-  validation: any
-  isPassword?: boolean
-  toggle?: () => void
-  showValue?: boolean
-}
-
 export const useRegister = () => {
-  const [showPass, setShowPass] = useState({ password: false, confirm: false })
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const form = useForm<RegisterForm>()
+  const form = useForm<RegisterForm>({
+    mode: 'onChange' // Validación en tiempo real
+  })
   const { register, handleSubmit, watch, formState: { errors } } = form
-  const passwordValue = watch('password')
-
-  // ✅ Configuración de campos del formulario
-  const fields: FieldConfig[] = [
-    {
-      name: 'name',
-      label: 'Nombre Completo',
-      type: 'text',
-      placeholder: 'Tu nombre completo',
-      validation: {
-        required: 'El nombre es requerido',
-        minLength: { value: 2, message: 'Al menos 2 caracteres' }
-      }
-    },
-    {
-      name: 'email',
-      label: 'Correo Electrónico',
-      type: 'email',
-      placeholder: 'tu@email.com',
-      validation: {
-        required: 'El correo es requerido',
-        pattern: {
-          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-          message: 'Correo inválido'
-        }
-      }
-    },
-    {
-      name: 'password',
-      label: 'Contraseña',
-      type: showPass.password ? 'text' : 'password',
-      placeholder: '••••••••',
-      validation: {
-        required: 'La contraseña es requerida',
-        minLength: { value: 6, message: 'Al menos 6 caracteres' }
-      },
-      isPassword: true,
-      toggle: () => setShowPass(s => ({ ...s, password: !s.password })),
-      showValue: showPass.password
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Confirmar Contraseña',
-      type: showPass.confirm ? 'text' : 'password',
-      placeholder: '••••••••',
-      validation: {
-        required: 'Confirma tu contraseña',
-        validate: (val: string) => val === passwordValue || 'Las contraseñas no coinciden'
-      },
-      isPassword: true,
-      toggle: () => setShowPass(s => ({ ...s, confirm: !s.confirm })),
-      showValue: showPass.confirm
-    }
-  ]
 
   // ✅ Lógica de negocio: Registro + Auto-login
   const onSubmit: SubmitHandler<RegisterForm> = async (data) => {
@@ -131,14 +67,13 @@ export const useRegister = () => {
 
   return {
     // Estado
-    showPass,
     isLoading,
     errors,
-    fields,
     
     // Métodos del formulario
     register,
     handleSubmit,
+    watch,
     
     // Actions
     onSubmit,

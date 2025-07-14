@@ -1,10 +1,11 @@
 // frontend/app/components/auth/forms/RegisterForm.tsx
 'use client'
 import Link from 'next/link'
-import { Eye, EyeOff, UserPlus } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import { FcGoogle } from 'react-icons/fc'
 import Button from '@/app/components/ui/Button'
 import Input from '@/app/components/ui/Input'
+import PasswordInput from '@/app/components/ui/PasswordInput'
 import Card from '@/app/components/ui/Card'
 import { useRegister } from '@/hooks/useRegister'
 
@@ -13,16 +14,19 @@ export default function RegisterForm() {
     // Estado
     isLoading,
     errors,
-    fields,
     
     // Métodos del formulario
     register,
     handleSubmit,
+    watch,
     
     // Actions
     onSubmit,
     handleGoogle
   } = useRegister()
+
+  // Observar el valor de password para validar confirmPassword
+  const passwordValue = watch('password')
 
   return (
     <div className="w-full max-w-md space-y-8">
@@ -35,32 +39,61 @@ export default function RegisterForm() {
       </div>
 
       <Card variant="elevated" padding="lg">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {fields.map(field => (
-            <div key={field.name} className={field.isPassword ? 'space-y-1' : undefined}>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {field.label}
-              </label>
-              <div className={field.isPassword ? 'relative' : undefined}>
-                <Input
-                  {...register(field.name, field.validation)}
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  error={errors[field.name]?.message as string | undefined}
-                  className={field.isPassword ? 'pr-10' : undefined}
-                />
-                {field.isPassword && field.toggle && (
-                  <button 
-                    type="button" 
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" 
-                    onClick={field.toggle}
-                  >
-                    {field.showValue ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+          {/* Campo de Nombre */}
+          <Input
+            {...register('name', {
+              required: 'El nombre es requerido',
+              minLength: { value: 2, message: 'Al menos 2 caracteres' }
+            })}
+            label="Nombre Completo"
+            type="text"
+            placeholder="Tu nombre completo"
+            error={errors.name?.message}
+            autoComplete="name"
+          />
+
+          {/* Campo de Email */}
+          <Input
+            {...register('email', {
+              required: 'El correo es requerido',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Correo inválido'
+              }
+            })}
+            label="Correo Electrónico"
+            type="email"
+            placeholder="tu@email.com"
+            error={errors.email?.message}
+            autoComplete="email"
+          />
+
+          {/* Campo de Contraseña */}
+          <PasswordInput
+            {...register('password', {
+              required: 'La contraseña es requerida',
+              minLength: { value: 6, message: 'Al menos 6 caracteres' }
+            })}
+            label="Contraseña"
+            placeholder="••••••••"
+            error={errors.password?.message}
+            autoComplete="new-password"
+            showToggle={true}
+          />
+
+          {/* Campo de Confirmar Contraseña */}
+          <PasswordInput
+            {...register('confirmPassword', {
+              required: 'Confirma tu contraseña',
+              validate: (val) => val === passwordValue || 'Las contraseñas no coinciden'
+            })}
+            label="Confirmar Contraseña"
+            placeholder="••••••••"
+            error={errors.confirmPassword?.message}
+            autoComplete="new-password"
+            showToggle={true}
+          />
 
           <Button type="submit" loading={isLoading} className="w-full" size="lg">
             Crear Cuenta

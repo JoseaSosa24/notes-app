@@ -10,50 +10,13 @@ export interface LoginForm {
   password: string
 }
 
-export type FieldConfig = {
-  name: keyof LoginForm
-  label: string
-  type: string
-  placeholder: string
-  validation: any
-  isPassword?: boolean
-  toggle?: () => void
-  showValue?: boolean
-}
-
 export const useLogin = () => {
-  const [showPass, setShowPass] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const form = useForm<LoginForm>()
+  const form = useForm<LoginForm>({
+    mode: 'onChange' // Validación en tiempo real
+  })
   const { register, handleSubmit, formState: { errors } } = form
-
-  // ✅ Configuración de campos del formulario
-  const fields: FieldConfig[] = [
-    {
-      name: 'email',
-      label: 'Correo Electrónico',
-      type: 'email',
-      placeholder: 'tu@email.com',
-      validation: {
-        required: 'El correo es requerido',
-        pattern: {
-          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-          message: 'Correo inválido'
-        }
-      }
-    },
-    {
-      name: 'password',
-      label: 'Contraseña',
-      type: showPass ? 'text' : 'password',
-      placeholder: '••••••••',
-      validation: { required: 'La contraseña es requerida' },
-      isPassword: true,
-      toggle: () => setShowPass(v => !v),
-      showValue: showPass
-    }
-  ]
 
   // ✅ Lógica de negocio: Login con credenciales
   const onSubmit: SubmitHandler<LoginForm> = async (data) => {
@@ -91,10 +54,8 @@ export const useLogin = () => {
 
   return {
     // Estado
-    showPass,
     isLoading,
     errors,
-    fields,
     
     // Métodos del formulario
     register,

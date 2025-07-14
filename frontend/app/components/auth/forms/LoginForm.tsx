@@ -1,10 +1,11 @@
 // frontend/app/components/auth/forms/LoginForm.tsx
 'use client'
 import Link from 'next/link'
-import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { LogIn } from 'lucide-react'
 import { FcGoogle } from 'react-icons/fc'
 import Button from '@/app/components/ui/Button'
 import Input from '@/app/components/ui/Input'
+import PasswordInput from '@/app/components/ui/PasswordInput'
 import Card from '@/app/components/ui/Card'
 import { useLogin } from '@/hooks/useLogin'
 
@@ -13,7 +14,6 @@ export default function LoginForm() {
     // Estado
     isLoading,
     errors,
-    fields,
     
     // Métodos del formulario
     register,
@@ -35,32 +35,34 @@ export default function LoginForm() {
       </div>
 
       <Card variant="elevated" padding="lg" className="animate-in slide-in-from-bottom-4 duration-500">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {fields.map(field => (
-            <div key={field.name} className={field.isPassword ? 'space-y-1' : undefined}>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {field.label}
-              </label>
-              <div className={field.isPassword ? 'relative' : undefined}>
-                <Input
-                  {...register(field.name, field.validation)}
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  error={errors[field.name]?.message as string | undefined}
-                  className={field.isPassword ? 'pr-10' : undefined}
-                />
-                {field.isPassword && field.toggle && (
-                  <button 
-                    type="button" 
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" 
-                    onClick={field.toggle}
-                  >
-                    {field.showValue ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+          {/* Campo de Email */}
+          <Input
+            {...register('email', {
+              required: 'El correo es requerido',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Correo inválido'
+              }
+            })}
+            label="Correo Electrónico"
+            type="email"
+            placeholder="tu@email.com"
+            error={errors.email?.message}
+            autoComplete="email"
+          />
+
+          {/* Campo de Contraseña */}
+          <PasswordInput
+            {...register('password', {
+              required: 'La contraseña es requerida'
+            })}
+            label="Contraseña"
+            placeholder="••••••••"
+            error={errors.password?.message}
+            autoComplete="current-password"
+            showToggle={true}
+          />
 
           <Button type="submit" loading={isLoading} className="w-full" size="lg">
             Iniciar Sesión
