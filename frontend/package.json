@@ -14,6 +14,7 @@
     "@types/react-dom": "^19.1.6",
     "autoprefixer": "^10.4.21",
     "axios": "^1.10.0",
+    "bun": "^1.2.18",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.446.0",
