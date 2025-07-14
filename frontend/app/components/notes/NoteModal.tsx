@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Edit3, Trash2, Save, Calendar } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useNotesStore } from '../store/notesStore'
+import { useNotesStore } from '@/app/store/notesStore'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import toast from 'react-hot-toast'

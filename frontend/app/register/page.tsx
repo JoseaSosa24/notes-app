@@ -1,7 +1,7 @@
 // frontend/app/register/page.tsx
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
-import RegisterClient from '@/app/components/RegisterClient'
+import RegisterClient from '@/app/components/auth/RegisterClient'
 
 export default async function RegisterPage() {
   // ✅ SSR: Si ya está autenticado, redirigir al dashboard

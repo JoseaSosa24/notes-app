@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { X, Save } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useNotesStore } from '../store/notesStore'
 import toast from 'react-hot-toast'
+import { useNotesStore } from '@/app/store/notesStore'
 
 interface CreateNoteModalProps {
   onClose: () => void
