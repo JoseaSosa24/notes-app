@@ -1,4 +1,3 @@
-
 # 🚀 Notes App - Aplicación de Notas Fullstack
 
 Una aplicación moderna de gestión de notas personales construida con Node.js, Express.js, MongoDB y Next.js 15.
@@ -43,6 +42,7 @@ bun --version
 
 **Opciones:**
 - **Local**: Instalar MongoDB Community Server desde https://mongodb.com
+- **Atlas (Nube)**: Crear cuenta gratuita en MongoDB Atlas (más fácil)
 - **Compass (Opcional)**: Para ver datos visualmente
 
 **¿Qué pasa cuando ejecutas el proyecto?**
@@ -79,23 +79,13 @@ cd ..
 
 **Backend** - Crear `backend/.env`:
 ```env
-MONGODB_URI=mongodb://localhost:27017/notesapp
-JWT_SECRET=tu-clave-secreta-jwt
-PORT=5000
-NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
-
-# Google OAuth (te enviaré por correo)
-GOOGLE_CLIENT_ID=tu-google-client-id
-GOOGLE_CLIENT_SECRET=tu-google-client-secret
+(Enviadas por correo)
 ```
 
 **Frontend** - Crear `frontend/.env.local`:
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=tu-google-client-id
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=tu-nextauth-secret
+# API Backend
+(Enviadas por correo)
 ```
 
 ## 🚀 Ejecutar el Proyecto
@@ -128,12 +118,6 @@ bun dev:frontend
 - El backend se conecta automáticamente a `mongodb://localhost:27017/notesapp`
 - Se crean las colecciones `users` y `notes` automáticamente
 
-### MongoDB Atlas (Nube)
-1. Crear cuenta en https://mongodb.com/atlas
-2. Crear cluster gratuito
-3. Copiar connection string
-4. Reemplazar en `MONGODB_URI`
-
 ### MongoDB Compass (Opcional)
 
 **Para ver los datos visualmente:**
@@ -158,10 +142,6 @@ bun dev:frontend
 - Con las colecciones `users` y `notes`
 - Podrás explorar, agregar, editar y eliminar datos visualmente
 
-#### 4. Para MongoDB Atlas (Nube)
-- Copiar el connection string completo desde Atlas
-- Pegarlo en "New Connection" en Compass
-- Conectar igual que arriba
 
 ## ✅ ¡Todo Funciona Perfectamente!
 
@@ -182,7 +162,6 @@ bun dev:frontend
 - **Modo Oscuro**: Toggle entre tema claro y oscuro
 - **Responsive**: Funciona perfecto en móvil, tablet y desktop
 - **Moderno**: UI limpia con Tailwind CSS
-- **Español**: Toda la interfaz en español
 
 ### 🚀 ¿Por qué no incluyo base de datos?
 
@@ -199,16 +178,21 @@ bun dev:frontend
 - Prueba editar, eliminar, buscar
 - Cambia entre modo claro/oscuro
 - Todo funcionará perfectamente
+- Cierra sesión e inicia sesión de nnuevo
+- Tiene validaciones de correos ya regitrados
 
 El backend y frontend están completamente implementados y funcionando. Solo necesitas las variables de entorno.
 
-## 📧 Variables por Correo
+## 📧 Variables de Entorno Listas
 
-Te enviaré estas variables:
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`  
-- `JWT_SECRET`
-- `NEXTAUTH_SECRET`
+**¡Ya no necesitas esperar ningún correo!** 
+
+Todas las variables de entorno están incluidas arriba. Solo:
+1. Copia y pega las variables exactamente como aparecen
+2. Crea los archivos `.env` y `.env.local` 
+3. ¡El proyecto funcionará inmediatamente!
+
+**Las credenciales de Google OAuth ya están configuradas** para desarrollo local en `localhost:3000`.
 
 ## 🐛 Problemas Comunes
 
