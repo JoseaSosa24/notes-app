@@ -36,17 +36,15 @@ yarn global add bun
 bun --version
 ```
 
-### 2. MongoDB
+2. MongoDB
+Descargar e instalar: https://www.mongodb.com/try/download/community
+bun i en el back
 
-**¡SIMPLE!** MongoDB se instala automáticamente con `bun install` en el backend.
+¿Qué pasa cuando ejecutas el backend del proyecto un ave esté las variables de entornor agregadas?
 
-**Opciones:**
-- **Compass (Opcional)**: Para ver datos visualmente
-
-**¿Qué pasa cuando ejecutas el proyecto?**
-- Se crea automáticamente una base de datos llamada `notesapp`
-- Con dos colecciones: `users` y `notes`
-- Todo funciona sin configuración extra
+Se crea automáticamente una base de datos llamada notesapp
+Con dos colecciones: users y notes
+Todo funciona sin configuración extra
 
 ## ⚡ Instalación del Proyecto
 
