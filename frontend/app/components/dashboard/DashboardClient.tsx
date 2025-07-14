@@ -1,4 +1,3 @@
-// frontend/app/components/dashboard/DashboardClient.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -9,10 +8,13 @@ import NoteCard from '@/app/components/notes/NoteCard'
 import NoteModal from '@/app/components/notes/NoteModal'
 import CreateNoteModal from '@/app/components/notes/CreateNoteModal'
 import ConfirmModal from '@/app/components/ui/ConfirmModal'
+import Button from '@/app/components/ui/Button'
+import Input from '@/app/components/ui/Input'
+import Card from '@/app/components/ui/Card'
+import ThemeToggle from '@/app/components/ui/ThemeToggle'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { useNotes } from '@/hooks/useNotes'
-
 
 interface DashboardClientProps {
   initialNotes: any[]
@@ -22,7 +24,6 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
   const { data: session, status } = useSession()
   const router = useRouter()
   
-  // ✅ Hook que maneja todo el estado y lógica de notas
   const {
     notes,
     loading,
@@ -31,18 +32,16 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
     deleteNote,
     searchNotes,
     setSelectedNote,
-    initializeNotes, // ✅ Método para notas iniciales
+    initializeNotes,
     cleanup
   } = useNotes()
 
-  // Estado local solo para UI
   const [searchTerm, setSearchTerm] = useState('')
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [noteToDelete, setNoteToDelete] = useState<any>(null)
   const [tokenConfigured, setTokenConfigured] = useState(false)
   const [initialNotesLoaded, setInitialNotesLoaded] = useState(false)
 
-  // ✅ 1. Configurar token PRIMERO
   useEffect(() => {
     if (status === 'loading') return
 
@@ -54,31 +53,25 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
     if (session.accessToken && !tokenConfigured) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${session.accessToken}`
       setTokenConfigured(true)
-      //console.log('✅ Token configurado')
     }
   }, [session, status, tokenConfigured, router])
 
-  // ✅ 2. Cargar notas DESPUÉS de configurar token
   useEffect(() => {
     if (!tokenConfigured || !session) return
 
-    // Si hay notas iniciales y no las hemos cargado aún
     if (initialNotes.length > 0 && !initialNotesLoaded) {
-      console.log('📝 Usando notas iniciales:', initialNotes.length)
-      initializeNotes(initialNotes) // ✅ Usar notas del servidor
+      initializeNotes(initialNotes)
       setInitialNotesLoaded(true)
     } else if (initialNotes.length === 0 && !initialNotesLoaded) {
-      //console.log('🔄 Cargando notas desde API...')
       setInitialNotesLoaded(true)
       fetchNotes().catch(error => {
-        console.error('❌ Error cargando notas:', error)
+        console.error('Error cargando notas:', error)
         toast.error('Error al cargar las notas')
       })
     }
   }, [tokenConfigured, session, initialNotes, initialNotesLoaded, fetchNotes])
 
   const handleLogout = async () => {
-    // ✅ Limpiar estado y token
     cleanup()
     delete axios.defaults.headers.common['Authorization']
     setTokenConfigured(false)
@@ -96,24 +89,21 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
       try {
         await deleteNote(noteToDelete._id)
         setNoteToDelete(null)
-        // Si era la nota seleccionada, cerrar el modal
         if (selectedNote?._id === noteToDelete._id) {
           setSelectedNote(null)
         }
       } catch (error) {
         console.error('Error eliminando nota:', error)
-        // El toast ya se maneja en el hook useNotes
       }
     }
   }
 
-  // ✅ Loading mientras verifica sesión y configura token
   if (status === 'loading' || !tokenConfigured) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
             {status === 'loading' ? 'Verificando sesión...' : 'Configurando autenticación...'}
           </p>
         </div>
@@ -121,38 +111,40 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
     )
   }
 
-  // ✅ Si no hay sesión, no mostrar nada
   if (!session) {
     return null
   }
 
-  // ✅ Usar el método de búsqueda del hook
   const filteredNotes = searchNotes(searchTerm)
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <FileText className="h-8 w-8 text-primary-600" />
-              <h1 className="ml-3 text-xl font-semibold text-gray-900">
+              <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                <FileText className="h-5 w-5 text-white" />
+              </div>
+              <h1 className="ml-3 text-xl font-semibold text-gray-900 dark:text-white">
                 Mis Notas
               </h1>
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
+              <ThemeToggle />
+              <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                 <User className="h-4 w-4" />
                 <span>{session.user?.name}</span>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleLogout}
-                className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-900 transition-colors"
               >
-                <LogOut className="h-4 w-4" />
-                <span>Cerrar Sesión</span>
-              </button>
+                <LogOut className="h-4 w-4 mr-1" />
+                Cerrar Sesión
+              </Button>
             </div>
           </div>
         </div>
@@ -162,56 +154,50 @@ export default function DashboardClient({ initialNotes }: DashboardClientProps) 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <input
+            <Input
               type="text"
               placeholder="Buscar notas..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input-field pl-10"
+              className="pl-10"
             />
           </div>
 
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="btn-primary flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Nueva Nota</span>
-          </button>
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nueva Nota
+          </Button>
         </div>
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="note-card animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-3"></div>
-                <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-              </div>
+              <Card key={i} className="animate-pulse h-48">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+              </Card>
             ))}
           </div>
         ) : filteredNotes.length === 0 ? (
           <div className="text-center py-12">
-            <FileText className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
+            <div className="mx-auto h-24 w-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
+              <FileText className="h-12 w-12 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
               {searchTerm ? 'No se encontraron notas' : 'No tienes notas aún'}
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
               {searchTerm
                 ? 'Intenta con otros términos de búsqueda'
                 : 'Comienza creando tu primera nota'
               }
             </p>
             {!searchTerm && (
-              <div className="mt-6">
-                <button
-                  onClick={() => setIsCreateModalOpen(true)}
-                  className="btn-primary flex items-center space-x-2 mx-auto"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span>Crear Primera Nota</span>
-                </button>
-              </div>
+              <Button onClick={() => setIsCreateModalOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Crear Primera Nota
+              </Button>
             )}
           </div>
         ) : (

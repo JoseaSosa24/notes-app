@@ -9,6 +9,10 @@
   body {
     @apply bg-gray-50 text-gray-900 font-sans;
   }
+  
+  html.dark body {
+    @apply bg-gray-900 text-gray-100;
+  }
 }
 
 @layer components {
@@ -39,4 +43,80 @@
   .modal-content {
     @apply bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto;
   }
+
+  /* Dark mode variants */
+  .dark .btn-secondary {
+    @apply bg-gray-700 hover:bg-gray-600 text-gray-200;
+  }
+  
+  .dark .input-field {
+    @apply bg-gray-800 border-gray-600 text-white;
+  }
+  
+  .dark .note-card {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .dark .modal-content {
+    @apply bg-gray-800;
+  }
+}
+
+/* Custom animations */
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: animate-in 0.2s ease-out;
+}
+
+@keyframes slide-in-from-bottom-4 {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-from-bottom-4 {
+  animation: slide-in-from-bottom-4 0.5s ease-out;
+}
+
+@keyframes zoom-in-95 {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.zoom-in-95 {
+  animation: zoom-in-95 0.2s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fade-in 0.2s ease-out;
 }

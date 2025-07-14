@@ -1,12 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Edit3, Trash2, Save, Calendar } from 'lucide-react'
+import { Edit3, Trash2, Save, Calendar } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { formatDistanceToNow } from 'date-fns'
 import { es } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { useNotes } from '@/hooks/useNotes'
+import Modal from '@/app/components/ui/Modal'
+import Button from '@/app/components/ui/Button'
+import Input from '@/app/components/ui/Input'
+import Textarea from '@/app/components/ui/Textarea'
 
 interface Note {
   _id: string
@@ -68,121 +72,120 @@ export default function NoteModal({ note, onClose, onDelete }: NoteModalProps) {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Header */}
-        <div className="flex justify-between items-start p-6 border-b border-gray-200">
-          <div className="flex-1 mr-4">
-            {isEditing ? (
-              <input
-                {...register('title', {
-                  required: 'El título es requerido',
-                  maxLength: {
-                    value: 200,
-                    message: 'El título es muy largo'
-                  }
-                })}
-                className="text-xl font-semibold text-gray-900 w-full border-none outline-none focus:ring-2 focus:ring-primary-500 rounded p-1"
-                placeholder="Título de la nota..."
-              />
-            ) : (
-              <h2 className="text-xl font-semibold text-gray-900">{note.title}</h2>
-            )}
-            {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-            )}
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleSubmit(onSubmit)}
-                  disabled={isLoading}
-                  className="btn-primary flex items-center space-x-1"
-                >
-                  <Save className="h-4 w-4" />
-                  <span>Guardar</span>
-                </button>
-                <button
-                  onClick={handleCancel}
-                  className="btn-secondary"
-                >
-                  Cancelar
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="btn-secondary flex items-center space-x-1"
-                  title="Editar nota"
-                >
-                  <Edit3 className="h-4 w-4" />
-                  <span>Editar</span>
-                </button>
-                <button
-                  onClick={onDelete}
-                  className="btn-danger flex items-center space-x-1"
-                  title="Eliminar nota"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span>Eliminar</span>
-                </button>
-              </>
-            )}
-            <button
-              onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-              title="Cerrar"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6">
+    <Modal 
+      isOpen={true} 
+      onClose={onClose} 
+      size="lg"
+      showCloseButton={false}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex-1 mr-4">
           {isEditing ? (
-            <div>
-              <textarea
-                {...register('content', {
-                  required: 'El contenido es requerido',
-                  maxLength: {
-                    value: 10000,
-                    message: 'El contenido es muy largo'
-                  }
-                })}
-                rows={12}
-                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-                placeholder="Escribe el contenido de tu nota aquí..."
-              />
-              {errors.content && (
-                <p className="mt-1 text-sm text-red-600">{errors.content.message}</p>
-              )}
-            </div>
+            <Input
+              {...register('title', {
+                required: 'El título es requerido',
+                maxLength: {
+                  value: 200,
+                  message: 'El título es muy largo'
+                }
+              })}
+              placeholder="Título de la nota..."
+              error={errors.title?.message}
+              className="text-xl font-semibold"
+            />
           ) : (
-            <div className="prose max-w-none">
-              <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                {note.content}
-              </p>
-            </div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {note.title}
+            </h2>
           )}
         </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <div className="flex items-center text-sm text-gray-500">
-            <Calendar className="h-4 w-4 mr-2" />
-            <span>
-              Última actualización: {formatDistanceToNow(new Date(note.updatedAt), {
-                addSuffix: true,
-                locale: es
-              })}
-            </span>
-          </div>
+        
+        <div className="flex items-center space-x-2">
+          {isEditing ? (
+            <>
+              <Button
+                onClick={handleSubmit(onSubmit)}
+                loading={isLoading}
+                size="sm"
+              >
+                <Save className="h-4 w-4 mr-1" />
+                Guardar
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={handleCancel}
+                size="sm"
+              >
+                Cancelar
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => setIsEditing(true)}
+                size="sm"
+              >
+                <Edit3 className="h-4 w-4 mr-1" />
+                Editar
+              </Button>
+              <Button
+                variant="danger"
+                onClick={onDelete}
+                size="sm"
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Eliminar
+              </Button>
+            </>
+          )}
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            size="sm"
+          >
+            ✕
+          </Button>
         </div>
       </div>
-    </div>
+
+      {/* Content */}
+      <div className="p-6">
+        {isEditing ? (
+          <Textarea
+            {...register('content', {
+              required: 'El contenido es requerido',
+              maxLength: {
+                value: 10000,
+                message: 'El contenido es muy largo'
+              }
+            })}
+            rows={12}
+            placeholder="Escribe el contenido de tu nota aquí..."
+            error={errors.content?.message}
+          />
+        ) : (
+          <div className="prose max-w-none dark:prose-invert">
+            <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+              {note.content}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+          <Calendar className="h-4 w-4 mr-2" />
+          <span>
+            Última actualización: {formatDistanceToNow(new Date(note.updatedAt), {
+              addSuffix: true,
+              locale: es
+            })}
+          </span>
+        </div>
+      </div>
+    </Modal>
   )
 }

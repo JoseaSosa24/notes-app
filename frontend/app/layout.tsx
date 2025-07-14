@@ -1,9 +1,9 @@
-// frontend/app/layout.tsx
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 import NextAuthSessionProvider from './components/auth/SessionProvider'
+import { ThemeProvider } from './components/ui/ThemeProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,9 +18,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body className={inter.className}>
-        <NextAuthSessionProvider>
+        <ThemeProvider>
+          <NextAuthSessionProvider>
             {children}
             <Toaster 
               position="top-right"
@@ -30,9 +31,20 @@ export default function RootLayout({
                   background: '#363636',
                   color: '#fff',
                 },
+                success: {
+                  style: {
+                    background: '#10b981',
+                  },
+                },
+                error: {
+                  style: {
+                    background: '#ef4444',
+                  },
+                },
               }}
             />
-        </NextAuthSessionProvider>
+          </NextAuthSessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
