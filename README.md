@@ -41,8 +41,6 @@ bun --version
 **¡SIMPLE!** MongoDB se instala automáticamente con `bun install` en el backend.
 
 **Opciones:**
-- **Local**: Instalar MongoDB Community Server desde https://mongodb.com
-- **Atlas (Nube)**: Crear cuenta gratuita en MongoDB Atlas (más fácil)
 - **Compass (Opcional)**: Para ver datos visualmente
 
 **¿Qué pasa cuando ejecutas el proyecto?**
