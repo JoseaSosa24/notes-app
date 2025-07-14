@@ -1,244 +1,168 @@
 # 📝 Personal Notes Manager - Fullstack App
 
-A modern, fullstack personal notes management application built with Node.js, Express.js, MongoDB, and Next.js 15.
+A modern, fullstack personal notes management application built with Node.js, Express.js, MongoDB, and Next.js 15+.
 
-## 🏗️ Architecture
 
 ```
-notes-manager/
-├── backend/          # Node.js + Express.js API
-│   ├── src/
-│   │   ├── models/   # Mongoose models
-│   │   ├── routes/   # API routes
-│   │   ├── middleware/ # Auth middleware
-│   │   └── server.ts # Main server file
-│   └── package.json
-├── frontend/         # Next.js 15 app
-│   ├── app/
-│   │   ├── components/ # React components
-│   │   ├── store/    # Zustand stores
-│   │   ├── dashboard/ # Dashboard page
-│   │   ├── login/    # Login page
-│   │   └── register/ # Register page
-│   └── package.json
-└── package.json      # Root package.json
+
+# 🚀 Guía de Instalación - Notes App
+
+## 📋 Estructura del Proyecto
+
+```
+notes-app/
+├── backend/          # API Node.js + Express.js
+├── frontend/         # Aplicación Next.js 15
+└── package.json      # Scripts principales
 ```
 
-## 🚀 Quick Start
+## 📋 Requisitos Previos
 
-### Prerequisites
+### 1. Instalar Bun (Requerido)
 
-- [Bun](https://bun.sh) (latest version)
-- [MongoDB](https://mongodb.com) (local or cloud instance)
-- Node.js 18+ (for compatibility)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd notes-manager
-   ```
-
-2. **Install dependencies**
-   ```bash
-   # Install root dependencies
-   bun install
-
-   # Install backend dependencies
-   cd backend
-   bun install
-
-   # Install frontend dependencies
-   cd ../frontend
-   bun install
-   ```
-
-3. **Environment Setup**
-
-   **Backend** - Create `backend/.env`:
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/notesapp
-   JWT_SECRET=your-super-secure-jwt-secret-key-here
-   PORT=5000
-   NODE_ENV=development
-   FRONTEND_URL=http://localhost:3000
-   ```
-
-   **Frontend** - Create `frontend/.env.local`:
-   ```env
-   NEXT_PUBLIC_API_URL=http://localhost:5000/api
-   ```
-
-4. **Start the development servers**
-
-   From the root directory:
-   ```bash
-   # Start both frontend and backend
-   bun dev
-
-   # Or start them separately:
-   bun dev:backend   # Backend only
-   bun dev:frontend  # Frontend only
-   ```
-
-   The application will be available at:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000/api
-
-## 📋 Features
-
-### ✅ Core Functionality
-
-- **User Authentication**
-  - User registration with email and password
-  - Secure login with JWT tokens
-  - Password hashing with bcrypt
-
-- **Notes Management**
-  - Create new notes with title and content
-  - View all personal notes in a grid layout
-  - Edit existing notes with real-time updates
-  - Delete notes with confirmation modal
-  - Search notes by title or content
-
-- **User Experience**
-  - Responsive design for all devices
-  - Spanish language interface
-  - Toast notifications for user feedback
-  - Loading states and error handling
-  - Clean, modern UI with Tailwind CSS
-
-### 🛠️ Technical Features
-
-- **Backend (Node.js + Express.js)**
-  - RESTful API design
-  - MongoDB with Mongoose ODM
-  - JWT authentication middleware
-  - Input validation with Zod
-  - CORS enabled for frontend communication
-  - Error handling and logging
-
-- **Frontend (Next.js 15)**
-  - App Router with TypeScript
-  - Client and server components
-  - Zustand for state management
-  - React Hook Form for form handling
-  - Axios for API communication
-  - Hot toast notifications
-
-## 🔧 Scripts
-
-### Root Project
+**Método 1 - Instalación directa (recomendado):**
 ```bash
-bun dev          # Start both frontend and backend
-bun dev:frontend # Start frontend only
-bun dev:backend  # Start backend only
-bun build        # Build frontend for production
+# Windows (PowerShell)
+irm bun.sh/install.ps1 | iex
+
+# macOS/Linux
+curl -fsSL https://bun.sh/install | bash
 ```
 
-### Backend
+**Método 2 - Si ya tienes npm/yarn instalado:**
 ```bash
-cd backend
-bun dev          # Start development server with file watching
-bun start        # Start production server
-bun build        # Build TypeScript to JavaScript
+# Con npm
+npm install -g bun
+
+# Con yarn  
+yarn global add bun
+
+# Verificar instalación
+bun --version
 ```
 
-### Frontend
+### 2. MongoDB
+
+**¡IMPORTANTE!** MongoDB se instala automáticamente con `bun install` en el backend.
+
+**Opciones:**
+- **Local**: Solo instalar MongoDB Community Server desde https://mongodb.com
+- **Nube**: Crear cuenta gratuita en MongoDB Atlas (más fácil)
+- **Compass**: Instalar MongoDB Compass para ver datos visualmente (opcional)
+
+## 🔧 Instalación del Proyecto
+
+### 1. Clonar y entrar al proyecto
 ```bash
-cd frontend
-bun dev          # Start Next.js development server
-bun build        # Build for production
-bun start        # Start production server
-bun lint         # Run ESLint
+git clone https://github.com/JoseaSosa24/notes-app.git
+cd notes-app
 ```
 
-## 🗄️ Database Schema
+### 2. Instalar dependencias
 
-### User Model
-```javascript
-{
-  _id: ObjectId,
-  name: String,
-  email: String (unique),
-  password: String (hashed),
-  createdAt: Date,
-  updatedAt: Date
-}
+**Todo el proyecto usa Bun:**
+```bash
+# Raíz del proyecto
+bun install
+
+# Backend
+cd backend && bun install
+
+# Frontend  
+cd ../frontend && bun install
+
+# Volver a raíz
+cd ..
 ```
 
-### Note Model
-```javascript
-{
-  _id: ObjectId,
-  title: String,
-  content: String,
-  userId: ObjectId (ref: User),
-  createdAt: Date,
-  updatedAt: Date
-}
+### 3. Variables de entorno
+
+**Backend** - Crear `backend/.env`:
+```env
+MONGODB_URI=mongodb://localhost:27017/notesapp
+JWT_SECRET=tu-clave-secreta-jwt
+PORT=5000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
+
+# Google OAuth (te enviaré por correo)
+GOOGLE_CLIENT_ID=tu-google-client-id
+GOOGLE_CLIENT_SECRET=tu-google-client-secret
 ```
 
-## 🔒 API Endpoints
+**Frontend** - Crear `frontend/.env.local`:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=tu-google-client-id
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=tu-nextauth-secret
+```
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
+## ⚡ Ejecutar el Proyecto
 
-### Notes (Protected)
-- `GET /api/notes` - Get user's notes
-- `GET /api/notes/:id` - Get specific note
-- `POST /api/notes` - Create new note
-- `PUT /api/notes/:id` - Update note
-- `DELETE /api/notes/:id` - Delete note
+### Opción 1: Todo junto (Recomendado)
+```bash
+# Desde la raíz - inicia backend y frontend
+bun dev
+```
 
-## 🎨 UI/UX Features
+### Opción 2: Por separado
+```bash
+# Terminal 1 - Backend
+bun dev:backend
 
-- **Spanish Language Interface**: All user-facing content in Spanish
-- **Responsive Design**: Works on mobile, tablet, and desktop
-- **Modern UI**: Clean design with Tailwind CSS
-- **Interactive Elements**: Hover effects, transitions, animations
-- **Accessibility**: Proper ARIA labels and keyboard navigation
-- **Toast Notifications**: Success and error messages
-- **Loading States**: Skeleton loaders and spinners
-- **Modal System**: Note viewing, editing, and deletion confirmations
+# Terminal 2 - Frontend  
+bun dev:frontend
+```
 
-## 🔐 Security Features
+## 🌐 URLs
 
-- JWT-based authentication
-- Password hashing with bcrypt
-- Protected API routes
-- User-specific data access
-- Input validation and sanitization
-- CORS configuration
+- **Aplicación**: http://localhost:3000
+- **API**: http://localhost:5000/api
+- **Puerto fijo para Google OAuth**: 3000 (no cambiar)
 
-## 📱 Responsive Breakpoints
+## 🗄️ Base de Datos
 
-- Mobile: < 768px
-- Tablet: 768px - 1024px
-- Desktop: > 1024px
+### MongoDB Local
+```bash
+# Iniciar (si instalaste local)
+# Windows: net start MongoDB
+# macOS: brew services start mongodb-community
+# Linux: sudo systemctl start mongod
+```
 
-## 🛡️ Error Handling
+### MongoDB Atlas (Nube)
+1. Crear cuenta en https://mongodb.com/atlas
+2. Crear cluster gratuito
+3. Copiar connection string
+4. Reemplazar en `MONGODB_URI`
 
-- Global error handling middleware
-- Client-side error boundaries
-- Toast notifications for user feedback
-- Graceful fallbacks for failed requests
-- Form validation with helpful messages
+### MongoDB Compass (Opcional)
+- Interfaz gráfica para ver/gestionar datos
+- Conectar a: `mongodb://localhost:27017` (local) o tu Atlas string
 
-## 📄 License
+## 📧 Variables por Correo
 
-This project is for educational purposes. Feel free to use and modify as needed.
+Te enviaré estas variables:
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`  
+- `JWT_SECRET`
+- `NEXTAUTH_SECRET`
 
-## 🤝 Contributing
+## 🐛 Problemas Comunes
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+**MongoDB no conecta:**
+```bash
+# Verificar que está corriendo
+mongosh mongodb://localhost:27017
+```
 
-## 📞 Support
+**Puerto ocupado:**
+```bash
+# Encontrar proceso
+lsof -i :3000  # Mac/Linux
+netstat -ano | findstr :3000  # Windows
 
-For issues and questions, please create an issue in the repository.# notes-app
+# Matar proceso
+kill -9 <PID>  # Mac/Linux
+taskkill /PID
