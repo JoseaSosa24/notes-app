@@ -1,3 +1,4 @@
+// frontend/app/components/auth/LoginClient.tsx
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -10,6 +11,7 @@ import { signIn } from 'next-auth/react'
 import Button from '@/app/components/ui/Button'
 import Input from '@/app/components/ui/Input'
 import Card from '@/app/components/ui/Card'
+import AuthHero from '@/app/components/auth/AuthHero'
 
 interface LoginForm {
   email: string
@@ -31,7 +33,6 @@ export default function LoginClient() {
   const [showPass, setShowPass] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>()
 
   const fields: FieldConfig[] = [
@@ -42,7 +43,10 @@ export default function LoginClient() {
       placeholder: 'tu@email.com',
       validation: {
         required: 'El correo es requerido',
-        pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Correo inválido' }
+        pattern: {
+          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+          message: 'Correo inválido'
+        }
       }
     },
     {
@@ -89,24 +93,12 @@ export default function LoginClient() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Hero Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1481627834876-b7833e8f5570?...&auto=format&fit=crop&w=2070&q=80)'
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-600/90 to-primary-800/90" />
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
-          <div className="max-w-md text-center">
-            <h1 className="text-4xl font-bold mb-6">Organiza tus ideas</h1>
-            <p className="text-xl opacity-90 leading-relaxed">
-              Gestiona tus notas de forma inteligente y mantén tus pensamientos organizados en un solo lugar.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Hero Section */}
+      <AuthHero 
+        title="Organiza tus ideas"
+        description="Gestiona tus notas de forma inteligente y mantén tus pensamientos organizados en un solo lugar."
+        backgroundImage="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+      />
 
       {/* Login Form */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-900">
@@ -143,11 +135,17 @@ export default function LoginClient() {
                 </div>
               ))}
 
-              <Button type="submit" loading={isLoading} className="w-full" size="lg">Iniciar Sesión</Button>
+              <Button type="submit" loading={isLoading} className="w-full" size="lg">
+                Iniciar Sesión
+              </Button>
 
               <div className="relative">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300 dark:border-gray-600" /></div>
-                <div className="relative flex justify-center text-sm"><span className="px-2 bg-white dark:bg-gray-800 text-gray-500">O continúa con</span></div>
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">O continúa con</span>
+                </div>
               </div>
 
               <Button type="button" variant="outline" onClick={handleGoogle} disabled={isLoading} className="w-full" size="lg">
@@ -157,7 +155,9 @@ export default function LoginClient() {
 
             <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
               ¿No tienes cuenta?{' '}
-              <Link href="/register" className="font-medium text-primary-600 hover:text-primary-500">Registrarse aquí</Link>
+              <Link href="/register" className="font-medium text-primary-600 hover:text-primary-500">
+                Registrarse aquí
+              </Link>
             </p>
           </Card>
         </div>

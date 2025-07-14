@@ -1,3 +1,4 @@
+// frontend/app/components/auth/RegisterClient.tsx
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -11,6 +12,7 @@ import axios from 'axios'
 import Button from '@/app/components/ui/Button'
 import Input from '@/app/components/ui/Input'
 import Card from '@/app/components/ui/Card'
+import AuthHero from '@/app/components/auth/AuthHero'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000/api'
 
@@ -40,10 +42,55 @@ export default function RegisterClient() {
   const passwordValue = watch('password')
 
   const fields: FieldConfig[] = [
-    { name: 'name', label: 'Nombre Completo', type: 'text', placeholder: 'Tu nombre completo', validation: { required: 'El nombre es requerido', minLength: { value: 2, message: 'Al menos 2 caracteres' } } },
-    { name: 'email', label: 'Correo Electrónico', type: 'email', placeholder: 'tu@email.com', validation: { required: 'El correo es requerido', pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Correo inválido' } } },
-    { name: 'password', label: 'Contraseña', type: showPass.password ? 'text' : 'password', placeholder: '••••••••', validation: { required: 'La contraseña es requerida', minLength: { value: 6, message: 'Al menos 6 caracteres' } }, isPassword: true, toggle: () => setShowPass(s => ({ ...s, password: !s.password })), showValue: showPass.password },
-    { name: 'confirmPassword', label: 'Confirmar Contraseña', type: showPass.confirm ? 'text' : 'password', placeholder: '••••••••', validation: { required: 'Confirma tu contraseña', validate: (val: string) => val === passwordValue || 'Las contraseñas no coinciden' }, isPassword: true, toggle: () => setShowPass(s => ({ ...s, confirm: !s.confirm })), showValue: showPass.confirm }
+    {
+      name: 'name',
+      label: 'Nombre Completo',
+      type: 'text',
+      placeholder: 'Tu nombre completo',
+      validation: {
+        required: 'El nombre es requerido',
+        minLength: { value: 2, message: 'Al menos 2 caracteres' }
+      }
+    },
+    {
+      name: 'email',
+      label: 'Correo Electrónico',
+      type: 'email',
+      placeholder: 'tu@email.com',
+      validation: {
+        required: 'El correo es requerido',
+        pattern: {
+          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+          message: 'Correo inválido'
+        }
+      }
+    },
+    {
+      name: 'password',
+      label: 'Contraseña',
+      type: showPass.password ? 'text' : 'password',
+      placeholder: '••••••••',
+      validation: {
+        required: 'La contraseña es requerida',
+        minLength: { value: 6, message: 'Al menos 6 caracteres' }
+      },
+      isPassword: true,
+      toggle: () => setShowPass(s => ({ ...s, password: !s.password })),
+      showValue: showPass.password
+    },
+    {
+      name: 'confirmPassword',
+      label: 'Confirmar Contraseña',
+      type: showPass.confirm ? 'text' : 'password',
+      placeholder: '••••••••',
+      validation: {
+        required: 'Confirma tu contraseña',
+        validate: (val: string) => val === passwordValue || 'Las contraseñas no coinciden'
+      },
+      isPassword: true,
+      toggle: () => setShowPass(s => ({ ...s, confirm: !s.confirm })),
+      showValue: showPass.confirm
+    }
   ]
 
   const onSubmit: SubmitHandler<RegisterForm> = async data => {
@@ -54,9 +101,16 @@ export default function RegisterClient() {
         email: data.email,
         password: data.password
       })
-      const res = await signIn('credentials', { email: data.email, password: data.password, redirect: false })
-      if (res?.error) toast.error('Error al crear la cuenta')
-      else {
+      
+      const res = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false
+      })
+      
+      if (res?.error) {
+        toast.error('Error al crear la cuenta')
+      } else {
         toast.success('¡Cuenta creada exitosamente!')
         router.push('/dashboard')
       }
@@ -79,22 +133,12 @@ export default function RegisterClient() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Hero Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1455390582262-044cdead277a?...&auto=format&fit=crop&w=2073&q=80)' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-600/90 to-primary-800/90" />
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
-          <div className="max-w-md text-center">
-            <h1 className="text-4xl font-bold mb-6">Comienza tu viaje</h1>
-            <p className="text-xl opacity-90 leading-relaxed">
-              Únete a miles de usuarios que ya organizan sus ideas de manera eficiente con nuestra plataforma.
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Hero Section */}
+      <AuthHero 
+        title="Comienza tu viaje"
+        description="Únete a miles de usuarios que ya organizan sus ideas de manera eficiente con nuestra plataforma."
+        backgroundImage="https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80"
+      />
 
       {/* Formulario */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-900">
@@ -111,7 +155,9 @@ export default function RegisterClient() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {fields.map(field => (
                 <div key={field.name} className={field.isPassword ? 'space-y-1' : undefined}>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{field.label}</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {field.label}
+                  </label>
                   <div className={field.isPassword ? 'relative' : undefined}>
                     <Input
                       {...register(field.name, field.validation)}
@@ -121,7 +167,11 @@ export default function RegisterClient() {
                       className={field.isPassword ? 'pr-10' : undefined}
                     />
                     {field.isPassword && field.toggle && (
-                      <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" onClick={field.toggle}>
+                      <button 
+                        type="button" 
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" 
+                        onClick={field.toggle}
+                      >
                         {field.showValue ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     )}
@@ -129,7 +179,9 @@ export default function RegisterClient() {
                 </div>
               ))}
 
-              <Button type="submit" loading={isLoading} className="w-full" size="lg">Crear Cuenta</Button>
+              <Button type="submit" loading={isLoading} className="w-full" size="lg">
+                Crear Cuenta
+              </Button>
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -146,7 +198,10 @@ export default function RegisterClient() {
             </form>
 
             <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-              ¿Ya tienes cuenta? <Link href="/login" className="font-medium text-primary-600 hover:text-primary-500">Iniciar sesión aquí</Link>
+              ¿Ya tienes cuenta?{' '}
+              <Link href="/login" className="font-medium text-primary-600 hover:text-primary-500">
+                Iniciar sesión aquí
+              </Link>
             </p>
           </Card>
         </div>
