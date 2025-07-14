@@ -37,8 +37,10 @@ export default function Header() {
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center space-x-3 flex-shrink-0">
+            {/* Logo - oculto en móvil cuando menu abierto */}
+            <div className={`flex items-center space-x-3 flex-shrink-0 transition-opacity duration-200 ${
+              mobileMenuOpen ? 'md:flex opacity-0 md:opacity-100' : 'flex opacity-100'
+            }`}>
               <FileText className="h-6 w-6 text-primary-600" />
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Mis Notas</h1>
             </div>
@@ -88,7 +90,11 @@ export default function Header() {
         mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         {/* Header del panel */}
-        <div className="flex items-center justify-end p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center space-x-3">
+            <FileText className="h-5 w-5 text-primary-600" />
+            <span className="text-lg font-semibold text-gray-900 dark:text-white">Mis Notas</span>
+          </div>
           <Button 
             variant="ghost" 
             size="sm" 
