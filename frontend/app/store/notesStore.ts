@@ -1,3 +1,4 @@
+// frontend/app/store/notesStore.ts
 import { create } from 'zustand'
 import axios from 'axios'
 
@@ -28,15 +29,21 @@ interface NotesState {
   createNote: (data: CreateNoteData) => Promise<void>
   updateNote: (id: string, data: UpdateNoteData) => Promise<void>
   deleteNote: (id: string) => Promise<void>
+  setInitialNotes: (notes: Note[]) => void
 }
 
 export const useNotesStore = create<NotesState>((set, get) => ({
   notes: [],
   loading: false,
 
+  setInitialNotes: (notes: Note[]) => {
+    set({ notes, loading: false })
+  },
+
   fetchNotes: async () => {
     set({ loading: true })
     try {
+      // ✅ Usa axios.defaults (configurado en DashboardClient)
       const response = await axios.get(`${API_URL}/notes`)
       set({ notes: response.data, loading: false })
     } catch (error: any) {
@@ -47,6 +54,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
   createNote: async (data: CreateNoteData) => {
     try {
+      // ✅ Usa axios.defaults (configurado en DashboardClient)
       const response = await axios.post(`${API_URL}/notes`, data)
       const newNote = response.data
       set(state => ({
@@ -59,6 +67,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
   updateNote: async (id: string, data: UpdateNoteData) => {
     try {
+      // ✅ Usa axios.defaults (configurado en DashboardClient)
       const response = await axios.put(`${API_URL}/notes/${id}`, data)
       const updatedNote = response.data
       set(state => ({
@@ -73,6 +82,7 @@ export const useNotesStore = create<NotesState>((set, get) => ({
 
   deleteNote: async (id: string) => {
     try {
+      // ✅ Usa axios.defaults (configurado en DashboardClient)
       await axios.delete(`${API_URL}/notes/${id}`)
       set(state => ({
         notes: state.notes.filter(note => note._id !== id)
