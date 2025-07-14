@@ -35,7 +35,7 @@ export default function NoteModal({ note, onClose, onDelete }: NoteModalProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { updateNote } = useNotes()
-  
+
   const { register, handleSubmit, formState: { errors }, reset } = useForm<NoteForm>({
     defaultValues: {
       title: note.title,
@@ -72,83 +72,46 @@ export default function NoteModal({ note, onClose, onDelete }: NoteModalProps) {
   }
 
   return (
-    <Modal 
-      isOpen={true} 
-      onClose={onClose} 
+    <Modal
+      isOpen={true}
+      onClose={onClose}
       size="lg"
       showCloseButton={false}
     >
+
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex-1 mr-4">
+      <div className="relative flex items-center p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex-1 mr-4 min-w-0">
           {isEditing ? (
             <Input
               {...register('title', {
                 required: 'El título es requerido',
-                maxLength: {
-                  value: 200,
-                  message: 'El título es muy largo'
-                }
+                maxLength: { value: 200, message: 'El título es muy largo' }
               })}
               placeholder="Título de la nota..."
               error={errors.title?.message}
               className="text-xl font-semibold"
             />
           ) : (
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white truncate">
               {note.title}
             </h2>
           )}
         </div>
-        
-        <div className="flex items-center space-x-2">
-          {isEditing ? (
-            <>
-              <Button
-                onClick={handleSubmit(onSubmit)}
-                loading={isLoading}
-                size="sm"
-              >
-                <Save className="h-4 w-4 mr-1" />
-                Guardar
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={handleCancel}
-                size="sm"
-              >
-                Cancelar
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="secondary"
-                onClick={() => setIsEditing(true)}
-                size="sm"
-              >
-                <Edit3 className="h-4 w-4 mr-1" />
-                Editar
-              </Button>
-              <Button
-                variant="danger"
-                onClick={onDelete}
-                size="sm"
-              >
-                <Trash2 className="h-4 w-4 mr-1" />
-                Eliminar
-              </Button>
-            </>
-          )}
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            size="sm"
-          >
-            ✕
-          </Button>
-        </div>
+
+        {/* Botón de cierre siempre al tope-derecha */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="absolute top-6 right-6 p-2"
+          onClick={onClose}
+          aria-label="Cerrar"
+        >
+          ✕
+        </Button>
       </div>
+
+
 
       {/* Content */}
       <div className="p-6">
@@ -176,16 +139,42 @@ export default function NoteModal({ note, onClose, onDelete }: NoteModalProps) {
 
       {/* Footer */}
       <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-          <Calendar className="h-4 w-4 mr-2" />
-          <span>
-            Última actualización: {formatDistanceToNow(new Date(note.updatedAt), {
-              addSuffix: true,
-              locale: es
-            })}
-          </span>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+            <Calendar className="h-4 w-4 mr-2" />
+            <span>
+              Última actualización: {formatDistanceToNow(new Date(note.updatedAt), {
+                addSuffix: true,
+                locale: es
+              })}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap justify-end gap-2 w-full sm:w-auto">
+            {isEditing ? (
+              <>
+                <Button onClick={handleSubmit(onSubmit)} loading={isLoading} size="sm">
+                  <Save className="h-4 w-4 mr-1" /> Guardar
+                </Button>
+                <Button variant="secondary" onClick={handleCancel} size="sm">
+                  Cancelar
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="secondary" onClick={() => setIsEditing(true)} size="sm">
+                  <Edit3 className="h-4 w-4 mr-1" /> Editar
+                </Button>
+                <Button variant="danger" onClick={onDelete} size="sm">
+                  <Trash2 className="h-4 w-4 mr-1" /> Eliminar
+                </Button>
+              </>
+            )}
+
+          </div>
         </div>
       </div>
+
     </Modal>
   )
 }
